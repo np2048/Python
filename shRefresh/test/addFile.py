@@ -21,5 +21,6 @@ if not os.path.exists("path/"):
    os.mkdir("path")
 
 # Create path file
+fileTarget = sys.argv[3]
 with open("path/" + fileName, "w") as f:
-   f.write("target/" + fileName)
+   f.write(fileTarget + "/" + fileName)
