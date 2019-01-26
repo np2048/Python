@@ -9,26 +9,42 @@
 import os
 import sys
 
-# Set current directory
-os.chdir(os.path.dirname(sys.argv[0]) )
+class Dir:
+   def __init__(self, path):
+      self.path = path
+      self.read()
 
-# Go throu all the files in the path/ subdirectory. 
-# Every file in path/ contains the actual path of the orignal file in the system.
-for filename in os.listdir('path'):
-   with open('path/'+filename, 'r') as fPath:
-      filepath = fPath.readline().replace('\n', '').replace('\r', '')
-   #print(filepath)
-   command = ""
-   if len(sys.argv)==1:
-      command = "cp " + filepath + " " + filename
-   if len(sys.argv)>1 and sys.argv[1] == "install":
-      os.system("mkdir -p " + os.path.dirname(filepath))
-      command = "cp " + filename + " " + filepath  
-   if not command == "":
-      print(command)
+   def Refresh(self):
+      for filename, filepath in self.files.items():
+         self.system("cp " + filepath + " " + filename )
+   
+   def Install(self):
+      for filename, filepath in self.files.items():
+         self.system('mkdir -p ' + os.path.dirname(filepath))
+         self.system("cp " + filename + " " + filepath ) 
+   
+   # Go throu all the files in the path/ subdirectory. 
+   # Every file in path/ contains the actual path of the orignal file in the system.
+   def read(self):
+      self.files = { }
+      os.chdir(self.path)
+      for filename in os.listdir('path'):
+         with open('path/'+filename, 'r') as fPath:
+            self.files.update({filename : fPath.readline().replace('\n', '').replace('\r', '')} )
+      #print(self.files)
+
+   def system(self, command):
+      print(command, end=' ')
       try:
          os.system(command)
       except :
          print("error")
-#print(sys.argv[0])
+      print("")
+   
+#main run
+currentDir = Dir(os.path.dirname(sys.argv[0]) )
+if len(sys.argv)==1:
+   currentDir.Refresh()
+if len(sys.argv)>1 and sys.argv[1] == "install":
+   currentDir.Install()
 

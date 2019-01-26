@@ -21,7 +21,7 @@ for i in range(0, len(fileName)):
    os.system("./addFile.py " + fileName[i] + " " + fileContent[i] + " " + target)
 
 # run INSTALL
-#os.system("../refresh.py install")
+os.system("../refresh.py install")
 
 # return error if target directory not created
 if not os.path.exists("../" + target + "/"):
