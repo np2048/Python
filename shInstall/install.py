@@ -14,10 +14,6 @@ class Dir:
       self.path = path
       self.read()
 
-   def Refresh(self):
-      for filename, filepath in self.files.items():
-         self.system("cp " + filepath + " " + filename )
-   
    def Install(self):
       for filename, filepath in self.files.items():
          self.system('mkdir -p ' + os.path.dirname(filepath))
@@ -26,12 +22,15 @@ class Dir:
    # Go throu all the files in the path/ subdirectory. 
    # Every file in path/ contains the actual path of the orignal file in the system.
    def read(self):
-      self.files = { }
-      os.chdir(self.path)
-      for filename in os.listdir('path'):
-         with open('path/'+filename, 'r') as fPath:
-            self.files.update({filename : fPath.readline().replace('\n', '').replace('\r', '')} )
-      #print(self.files)
+        PathDirName = 'path'
+        self.files = { }
+        os.chdir(self.path)
+        if not os.path.exists(PathDirName) :
+           return
+        for filename in os.listdir(PathDirName):
+            with open(PathDirName+ os.sep +filename, 'r') as fPath:
+                self.files.update({filename : fPath.readline().replace('\n', '').replace('\r', '')} )
+#print(self.files)
 
    def system(self, command):
       print(command, end=' ')
@@ -42,9 +41,9 @@ class Dir:
       print("")
    
 #main run
-currentDir = Dir(os.path.dirname(sys.argv[0]) )
-if len(sys.argv)==1:
-   currentDir.Refresh()
-if len(sys.argv)>1 and sys.argv[1] == "install":
-   currentDir.Install()
+DirName = os.path.dirname( os.path.abspath( sys.argv[0] )) 
+if (len(sys.argv) > 1 and sys.argv[1] != '') :
+    DirName += os.sep + sys.argv[1]
+currentDir = Dir(DirName)
+currentDir.Install()
 

@@ -2,43 +2,40 @@
 import os
 import sys
 import shutil
-from testUtils import * 
+from TestUtils import * 
 
-# try to install 1 test file
-
-# Goto main script directory
-os.chdir( os.path.dirname(os.path.dirname( os.path.abspath( sys.argv[0] ))) )
+# try to install test files
 
 # remove target directory if exists
 targetDir = Dir("target")
-targetDir.remove()
+targetDir.Remove()
 
 # create test file
+dataDir = Dir("data")
+dataDir.Create()
 dataTestFiles = { "test1":"test1content", 'test2':'test2content' }
 files = []
 for fileName, fileContent in dataTestFiles.items():
     testFile = File('.', fileName)
-    testFile.write(fileContent)
+    testFile.Write(fileContent)
     files.append(testFile)
     pathFile = File('path', fileName)
-    pathFile.write(testFile.path() )
+    pathFile.Write(testFile.path() )
 
 # run INSTALL
-os.system("../install.py")
-
-#testCount = 0
+#os.system("./install.py " + dataDir.Name() )
 
 # return error if target directory not created
-if not targetDir.exists():
-    printError("1. No target directory")
+if not targetDir.Exists():
+    PrintError("1. No target directory")
     exit()
 
 # return error if there are no test files in the target directory
 filesTarget = []
 for fileName, fileContent in dataTestFiles :
     fTarget = File(targetDir.path, testFile.name)
-    if not fTarget.exists() :
-        printError("2. File not installed")
+    if not fTarget.Exists() :
+        PrintError("2. File not installed")
         exit()
     filesTarget.append(fTarget)
 
@@ -46,7 +43,7 @@ for fileName, fileContent in dataTestFiles :
 for testFile in filesTarget :
     testFileContent = testFile.read()
     if not testFileContent == dataTestFiles[testFile.name] :
-       printError("3. File content doesn't match the target")
+       PrintError("3. File content doesn't match the target")
        exit()
 
-printSuccess(sys.argv[0] + " OK")
+PrintSuccess(sys.argv[0] + " OK")
