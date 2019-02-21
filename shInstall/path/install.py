@@ -1,1 +1,1 @@
-~/Scripts/Config
+~/Scripts/Config/install.py

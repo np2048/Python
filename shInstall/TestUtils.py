@@ -13,24 +13,29 @@ def PrintSuccess(message):
 
 class File:
     def __init__(self, directory, name):
-        self.path = directory
+        self.dir = directory
         self.name = name
     def Path(self):
-        return self.path + os.sep + self.name
+        return self.dir + os.sep + self.name
     def Abspath(self):
-        return os.path.abspath(self.path)
+        return os.path.abspath(self.dir)
     def Exists(self):
-        return os.path.exists(self.Abspath() )
+        return os.path.exists(self.Path() )
     def Read(self):
         content = ''
+        if not self.Exists() : 
+            return content
         with open(self.Path(), 'r') as hFile:
             content = hFile.readline()  
         return content
-    def Write(self, content):
-        if not os.path.exists(self.path):
-            os.makedirs(self.path)
+    def Write(self, new_content):
+        old_content = self.Read()
+        if old_content == new_content and self.Exists(): 
+            return
+        if not os.path.exists(self.dir):
+            os.makedirs(self.dir)
         with open(self.Path(), 'w') as hFile:
-            hFile.write(content)
+            hFile.write(new_content)
 
 class Dir:
     def __init__(self, path):
