@@ -1,0 +1,7 @@
+Common config
+
+Device: {{ device }}
+
+{% if device == 'T102' %}
+T012 include
+{% endif %}
