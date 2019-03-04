@@ -13,6 +13,14 @@ import shutil
 import socket
 from jinja2 import Template
 
+def PrintSuccess(Action, FileName):
+   print('\033[92m' + Action + '\033[0m ' + FileName)
+
+def PrintGrey(Action, FileName):
+   print('\033[90m' + Action + ' ' + FileName + '\033[0m')
+
+def PrintError(Action, FileName):
+   print('\033[91m' + Action + '\033[0m ' + FileName)
 
 class Dir:
     def __init__(self, path):
@@ -24,7 +32,6 @@ class Dir:
             self.CopyFile(filename, filepath)
     def CopyFile(self, SourcePath, TargetPath):
         SourceContent = self.RenderFile(SourcePath)
-        print("Write: " + TargetPath)
         self.WriteFile(TargetPath, SourceContent)
         self.CopyFileMode(SourcePath, TargetPath)
     def CopyFileMode(self, SourcePath, TargetPath):
@@ -49,6 +56,7 @@ class Dir:
         self.BackupFile(Path)
         with open(Path, 'w') as hFile:
             hFile.write(NewContent)
+        PrintSuccess("Write", Path)
     def BackupFile(self, Path):
         if os.path.exists(Path) :   # if a file already exists save it before overwrite 
             BackupFileName = Path + '.old'
@@ -56,7 +64,7 @@ class Dir:
             if not os.path.exists(DefaultBackupFileName):
                 BackupFileName = DefaultBackupFileName
             shutil.copyfile(Path, BackupFileName)
-            print("Backup: " + BackupFileName)
+            PrintGrey("Backup", BackupFileName)
     def ReadFile(self, Path):
         content = ''
         if not os.path.exists(Path) : 

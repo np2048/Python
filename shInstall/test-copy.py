@@ -2,6 +2,7 @@
 import os
 import sys
 import shutil
+import subprocess
 from TestUtils import * 
 
 # try to install test files
@@ -62,14 +63,40 @@ TargetFile.Write(BackupFileContent)
 os.system("./install.py " + dataDir.Name() )
 
 # .default file must exist
-DefaultFile = File(TargetDir.path, TargetFile.name + '.default')
-if not DefaultFile.Exists():
-   PrintError("5. No .default backup file " + DefaultFile.Path() )
+BackupFile = File(TargetDir.path, TargetFile.name + '.default')
+if not BackupFile.Exists():
+   PrintError("5. No .default backup file " + BackupFile.Path() )
    exit()
 
 # test default contents
-if not DefaultFile.Read() == BackupFileContent :
+if not BackupFile.Read() == BackupFileContent :
     PrintError("6. default backup file content incorrect")
+    exit()
+
+# do the same test but this time use .old backup file name
+# modify target file contents
+BackupFileContent = "new content"
+TargetFile.Write(BackupFileContent)
+os.system("./install.py " + dataDir.Name() )
+
+# .default file must exist
+BackupFile = File(TargetDir.path, TargetFile.name + '.old')
+if not BackupFile.Exists():
+   PrintError("7. No .old backup file " + BackupFile.Path() )
+   exit()
+
+# test default contents
+if not BackupFile.Read() == BackupFileContent :
+    PrintError("8. old backup file content incorrect")
+    exit()
+
+# run install script one again and make sure there is now WRITE message as log output
+# (target file already exists and is the same, so no rewrite is needed
+result = subprocess.run(["./install.py", dataDir.Name()], stdout=subprocess.PIPE)
+result = result.stdout.decode('utf-8')
+if result != '':
+    PrintError("9. Extra output (no changes were made after last run):")
+    print(result)
     exit()
 
 PrintSuccess(sys.argv[0] + " OK")
