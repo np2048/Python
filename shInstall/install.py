@@ -32,6 +32,7 @@ class Dir:
             self.CopyFile(filename, filepath)
     def CopyFile(self, SourcePath, TargetPath):
         SourceContent = self.RenderFile(SourcePath)
+        if SourceContent == '' : return
         self.WriteFile(TargetPath, SourceContent)
         self.CopyFileMode(SourcePath, TargetPath)
     def CopyFileMode(self, SourcePath, TargetPath):
