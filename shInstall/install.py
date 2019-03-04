@@ -9,6 +9,7 @@
 import os
 import stat
 import sys
+import shutil
 import socket
 from jinja2 import Template
 
@@ -45,8 +46,17 @@ class Dir:
         PathDir = os.path.dirname(Path) 
         if not os.path.exists( PathDir ):
             os.makedirs( PathDir )
+        self.BackupFile(Path)
         with open(Path, 'w') as hFile:
             hFile.write(NewContent)
+    def BackupFile(self, Path):
+        if os.path.exists(Path) :   # if a file already exists save it before overwrite 
+            BackupFileName = Path + '.old'
+            DefaultBackupFileName = Path + '.default'
+            if not os.path.exists(DefaultBackupFileName):
+                BackupFileName = DefaultBackupFileName
+            shutil.copyfile(Path, BackupFileName)
+            print("Backup: " + BackupFileName)
     def ReadFile(self, Path):
         content = ''
         if not os.path.exists(Path) : 
