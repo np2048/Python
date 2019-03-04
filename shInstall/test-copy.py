@@ -18,6 +18,7 @@ files = []
 for fileName, fileContent in dataTestFiles.items():
     testFile = File(dataDir.path, fileName)
     testFile.Write(fileContent)
+    testFile.SetMode(0o777)
     files.append(testFile)
     pathFile = File(dataDir.path + os.sep + 'path', fileName)
     pathFile.Write(targetDir.path + os.sep + testFile.name)
@@ -44,6 +45,13 @@ for testFile in filesTarget :
     testFileContent = testFile.Read()
     if not testFileContent == dataTestFiles[testFile.name] :
        PrintError("3. File content doesn't match the target")
+       exit()
+
+# check file permissions (mode)
+for testFile in filesTarget :
+    testFileMode = testFile.GetMode()
+    if not testFileMode == 0o777 :
+       PrintError("4. File permissions doesn't match the target")
        exit()
 
 PrintSuccess(sys.argv[0] + " OK")

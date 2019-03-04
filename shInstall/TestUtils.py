@@ -2,6 +2,7 @@
 import os
 import sys
 import shutil
+import stat
 
 # test Utilities module
 
@@ -36,6 +37,12 @@ class File:
             os.makedirs(self.dir)
         with open(self.Path(), 'w') as hFile:
             hFile.write(new_content)
+    def SetMode(self, new_mode):
+        os.chmod(self.Path(), new_mode)
+        return
+    def GetMode(self):
+        mode = os.stat(self.Path())[stat.ST_MODE] - 0o100000
+        return mode
 
 class Dir:
     def __init__(self, path):

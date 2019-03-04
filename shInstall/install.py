@@ -7,6 +7,7 @@
 # If run with "install" argument it will copy the files from local directory TO the system.
 
 import os
+import stat
 import sys
 import socket
 from jinja2 import Template
@@ -24,9 +25,16 @@ class Dir:
         SourceContent = self.RenderFile(SourcePath)
         print("Write: " + TargetPath)
         self.WriteFile(TargetPath, SourceContent)
+        self.CopyFileMode(SourcePath, TargetPath)
+    def CopyFileMode(self, SourcePath, TargetPath):
+        SourceMode = self.GetFileMode(SourcePath)
+        if SourceMode != self.GetFileMode(TargetPath) :
+            os.chmod(TargetPath, SourceMode)
+    def GetFileMode(self, SourcePath):
+        return os.stat(SourcePath)[stat.ST_MODE]
     def RenderFile(self, Path):
         Content = self.ReadFile(Path) # read source file
-        template = Template(Content) # render source file using template engine
+        template = Template(Content, trim_blocks=True) # render source file using template engine
         hostname = socket.gethostname() # Get PC name
         Content = template.render(device=hostname)
         return Content
