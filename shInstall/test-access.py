@@ -2,20 +2,27 @@
 import os
 import sys
 import shutil
+import datetime
 
 from TestUtils import * 
 
 # try to install test files
 targetDir = Dir('/tmp')
+targetFile = File(targetDir.path, 'root.txt')
+if not targetFile.Exists() : targetFile.Write('test')
+targetFile.SetMode(0o444)
+timeFile = File(targetDir.path, 'time.txt')
 
 # create test file
 dataDir = Dir("data")
 dataDir.Create()
-dataTestFiles = { "root.txt":"Root: {{ root }}"}
-dataResultFiles = { "root.txt" : "Root: " }
+Now = str(datetime.datetime.now())
+dataTestFiles = { "root.txt":"Root: {{ root }}", "time.txt":Now}
+dataResultFiles = { "root.txt" : "Root: ", "time.txt":Now }
 files = []
 for fileName, fileContent in dataTestFiles.items():
     testFile = File(dataDir.path, fileName)
+    if testFile.Exists() : testFile.SetMode(0o777)
     testFile.Write(fileContent)
     testFile.SetMode(0o444)
     files.append(testFile)

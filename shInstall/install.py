@@ -48,12 +48,13 @@ class Dir:
         return Content
     def WriteFile(self, Path, NewContent):
         OldContent = self.ReadFile(Path)
-        if OldContent == NewContent and os.path.exists(Path) :
+        if OldContent == NewContent and os.path.isfile(Path) :
             return
         PathDir = os.path.dirname(Path) 
         if not os.path.exists( PathDir ):
             os.makedirs( PathDir )
-        if OldContent != '' : self.BackupFile(Path)
+        if OldContent != '' and os.path.isfile(Path) :
+            self.BackupFile(Path)
         try:
             with open(Path, 'w') as hFile:
                 hFile.write(NewContent)
