@@ -16,7 +16,7 @@ from jinja2 import Template
 def PrintSuccess(Action, FileName):
    print('\033[92m' + Action + '\033[0m ' + FileName)
 
-def PrintGrey(Action, FileName):
+def PrintGray(Action, FileName):
    print('\033[90m' + Action + ' ' + FileName + '\033[0m')
 
 def PrintError(Action, FileName):
@@ -65,10 +65,19 @@ class Dir:
             BackupFileName = Path + '.old'
             DefaultBackupFileName = Path + '.default'
             if not os.path.exists(DefaultBackupFileName):
-                BackupFileName = DefaultBackupFileName
+                # if no default backup but .old exists rename old file to be the .default
+                if os.path.exists(BackupFileName): 
+#                    try :
+                        shutil.move(BackupFileName, DefaultBackupFileName)
+                        PrintGray("Make default", os.path.basename(BackupFileName) 
+                                + ' > ' + os.path.basename(DefaultBackupFileName))
+#                    except:
+#                        PrintError("No access", BackupFileName + ' > ' + DefaultBackupFileName)
+                else :
+                    BackupFileName = DefaultBackupFileName
             try:
-                shutil.copyfile(Path, BackupFileName)
-                PrintGrey("Backup", BackupFileName)
+                shutil.move(Path, BackupFileName)
+                PrintGray("Backup", BackupFileName)
             except: PrintError("No access", Path + ' > ' + BackupFileName)
     def ReadFile(self, Path):
         content = ''
