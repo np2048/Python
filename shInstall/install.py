@@ -53,24 +53,30 @@ class Dir:
         PathDir = os.path.dirname(Path) 
         if not os.path.exists( PathDir ):
             os.makedirs( PathDir )
-        self.BackupFile(Path)
-        with open(Path, 'w') as hFile:
-            hFile.write(NewContent)
-        PrintSuccess("Write", Path)
+        if OldContent != '' : self.BackupFile(Path)
+        try:
+            with open(Path, 'w') as hFile:
+                hFile.write(NewContent)
+            PrintSuccess("Write", Path)
+        except: PrintError("No write access", Path)
     def BackupFile(self, Path):
         if os.path.exists(Path) :   # if a file already exists save it before overwrite 
             BackupFileName = Path + '.old'
             DefaultBackupFileName = Path + '.default'
             if not os.path.exists(DefaultBackupFileName):
                 BackupFileName = DefaultBackupFileName
-            shutil.copyfile(Path, BackupFileName)
-            PrintGrey("Backup", BackupFileName)
+            try:
+                shutil.copyfile(Path, BackupFileName)
+                PrintGrey("Backup", BackupFileName)
+            except: PrintError("No access", Path + ' > ' + BackupFileName)
     def ReadFile(self, Path):
         content = ''
         if not os.path.exists(Path) : 
             return content
-        with open(Path, 'r') as hFile:
-            content = hFile.read()  
+        try:
+            with open(Path, 'r') as hFile:
+                content = hFile.read()  
+        except: PrintError("No read access", Path)
         return content
 # Go throu all the files in the path/ subdirectory. 
 # Every file in path/ contains the actual path of the orignal file in the system.
