@@ -38,7 +38,8 @@ class Dir:
     def CopyFileMode(self, SourcePath, TargetPath):
         SourceMode = self.GetFileMode(SourcePath)
         if SourceMode != self.GetFileMode(TargetPath) :
-            os.chmod(TargetPath, SourceMode)
+            try: os.chmod(TargetPath, SourceMode)
+            except: PrintError("No chmod access", TargetPath)
     def GetFileMode(self, SourcePath):
         return os.stat(SourcePath)[stat.ST_MODE]
     def RenderFile(self, Path):
