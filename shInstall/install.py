@@ -41,7 +41,10 @@ class Dir:
             try: os.chmod(TargetPath, SourceMode)
             except: PrintError("No chmod access", TargetPath)
     def GetFileMode(self, SourcePath):
-        return os.stat(SourcePath)[stat.ST_MODE]
+        result = False
+        try: result = os.stat(SourcePath)[stat.ST_MODE]
+        except: PrintError("No read access", SourcePath)
+        return result
     def RenderFile(self, Path):
         Content = self.ReadFile(Path) # read source file
         template = Template(Content, trim_blocks=True) # render source file using template engine
