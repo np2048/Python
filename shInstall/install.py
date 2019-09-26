@@ -33,7 +33,7 @@ class Dir:
     def CopyFile(self, SourcePath, TargetPath):
         SourceContent = self.RenderFile(SourcePath)
         if SourceContent == '' : return
-        self.WriteFile(TargetPath, SourceContent)
+        if not self.WriteFile(TargetPath, SourceContent): return
         self.CopyFileMode(SourcePath, TargetPath)
     def CopyFileMode(self, SourcePath, TargetPath):
         SourceMode = self.GetFileMode(SourcePath)
@@ -54,17 +54,20 @@ class Dir:
     def WriteFile(self, Path, NewContent):
         OldContent = self.ReadFile(Path)
         if OldContent == NewContent and os.path.isfile(Path) :
-            return
+            return False
         PathDir = os.path.dirname(Path) 
         if not os.path.exists( PathDir ):
             os.makedirs( PathDir )
         if OldContent != '' and os.path.isfile(Path) :
             self.BackupFile(Path)
+        result = False
         try:
             with open(Path, 'w') as hFile:
                 hFile.write(NewContent)
             PrintSuccess("Write", Path)
+            result = True
         except: PrintError("No write access", Path)
+        return result
     def BackupFile(self, Path):
         if os.path.exists(Path) :   # if a file already exists save it before overwrite 
             BackupFileName = Path + '.old'
