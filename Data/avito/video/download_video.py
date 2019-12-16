@@ -5,6 +5,12 @@ import os
 import time
 from download import CacheDownload
 
+#
+# Classes for cached download of pages from avito.ru
+# 1) Search result pages download class
+# 2) Items pages obtained from search result pages
+#
+
 class SearchDownload(CacheDownload):
     URL = "https://www.avito.ru/krasnodar/tovary_dlya_kompyutera/komplektuyuschie/videokarty?cd=1" 
     DIR_PREFIX = "search_"

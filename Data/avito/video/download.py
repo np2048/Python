@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+#
+# Generic class for cached pages download
+#
+
 from urllib.request import urlopen
 import os
 import time
