@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from bs4 import BeautifulSoup
-import parse_search
 
-FILE_NAME = 'video.csv'
+FILE_NAME = 'search.csv'
+URL_PREFIX = 'http://avito.ru'
 
 def pagesCount(bsSearch):
     bsPages = bsSearch.findAll('span', class_='pagination-item-1WyVp')
@@ -26,7 +26,7 @@ def itemList(bsSearch):
         title = title.strip('\n ')
         price = bsItem.find('span', class_='price').text
         price = ''.join( filter(lambda i: i in '0123456789', price) )
-        list.append((href, title, price))
+        list.append((title, price, URL_PREFIX + href))
     return(list)
 
 def writeCsv(items, append=False):
@@ -37,3 +37,11 @@ def writeCsv(items, append=False):
         file.write(';'.join(item) + '\n')
     file.close()
 
+def readCsv(fileName):
+    data = []
+    file = open(fileName, "r")
+    lines = file.readlines()
+    file.close()
+    for line in lines:
+        data.append(line.split(';'))
+    return(data)
