@@ -6,18 +6,7 @@ from math import ceil
 import os
 import time
 from download_video import SearchDownload
-
-
-def parsePageCount(bsSearch):
-    bsPages = bsSearch.findAll("span", class_="pagination-item-1WyVp")
-    maxPage = 0
-    for bsPage in bsPages :
-        #print (bsPage.text)
-        if not bsPage.text.isdigit() : continue
-        page = int(bsPage.text)
-        if page  > maxPage : maxPage = page
-    print('Total page count: {0}'.format(maxPage))
-    return (maxPage)
+import parse_search
 
 # start timer and go
 timeStart = time.time()
@@ -28,12 +17,20 @@ html = search.getData()
 
 # count pages of search results
 bsSearch = BeautifulSoup(html, "html.parser")
-pagesCount = parsePageCount(bsSearch)
+pagesCount = parse_search.pagesCount(bsSearch)
+
+# get items from search results
+itemList = parse_search.itemList(bsSearch)
+#print(itemList)
+parse_search.writeCsv(itemList)
 
 # download all pages of search results
 for page in range(2, pagesCount+1):
     time.sleep(1)
-    search.getData(page)
+    html =  search.getData(page) 
+    bsSearch = BeautifulSoup(html, "html.parser")
+    itemList = parse_search.itemList(bsSearch)
+    parse_search.writeCsv(itemList, append=True)
 
 timeDuration = - timeStart + time.time()
 print('Duration: {0} seconds'.format(int(ceil(timeDuration))) )
