@@ -141,11 +141,23 @@ listSearch = csv.readCsv('search.csv')
 listSearch = listFilter(listSearch)
 #print(listSearch)
 
+# load exceptions list
+# exceptions are the advertisments than doesn't count
+# file may contain additional information
+# but only first column is valid for identification
+listExceptions = csv.readCsv('exceptions.csv')
+lst = []
+for item in listExceptions :
+    lst.append(item[0])
+listExceptions = lst
+#print(listExceptions)
+
 # find gpu by name
 listRecognized = []
 listUnknown = []
 for item in listSearch:
     (name, price, link) = item
+    link = link.replace('\n', '')
     listGpu = findGpu(name, listOrigin)
     #print(listGpu) 
     #exit()
@@ -161,12 +173,13 @@ for item in listSearch:
                 name, price, link, 
                 gpuName, gpuPerf, gpuLink
                 ])
-    else :
+    elif not link in listExceptions:
+        print(link)
         unknown = []
         for gpu in listGpu:
             (gpuName, gpuNameList, gpuPerf, gpuLink) = gpu 
             unknown += [gpuName, gpuPerf]
-        listUnknown.append([name] + unknown)
+        listUnknown.append([link, name, price] + unknown)
 print('Recognized: {0}\nUnknown: {1}'.format(
     len(listRecognized), 
     len(listUnknown)

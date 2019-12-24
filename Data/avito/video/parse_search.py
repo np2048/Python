@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import csv
 
 FILE_NAME = 'search.csv'
-URL_PREFIX = 'http://avito.ru'
+URL_PREFIX = 'https://www.avito.ru'
 
 def pagesCount(bsSearch):
     bsPages = bsSearch.findAll('span', class_='pagination-item-1WyVp')

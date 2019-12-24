@@ -7,6 +7,7 @@ import os
 import time
 from download_video import SearchDownload
 import parse_search
+import csv
 
 # start timer and go
 timeStart = time.time()
