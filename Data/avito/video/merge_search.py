@@ -185,20 +185,14 @@ print('Recognized: {0}\nUnknown: {1}'.format(
     len(listUnknown)
     ))
 #print(listRecognized)
-#csv.writeCsv(listRecognized, 'recognized.csv')
+
+# save merged list
+csv.writeCsv(listRecognized, 'recognized.csv')
+
+# save unrecognized list
 csv.writeCsv(listUnknown, 'undefined.csv')
 #print(listUnknown[-1])
 #print(listSearch[-1])
-#for lst in listUnknown[-1]:
- #   for lst1 in lst:
-  #      print(lst1[0])
-   #     print(lst1[2])
-    #print('{0} : {1}'.format(name, listGpu))
-    #if len(listAds): print(listAds)
-
-# save merged list
-
-# save unrecognized list
 
 timeDuration = - timeStart + time.time()
 print('Duration: {0} seconds'.format(int(ceil(timeDuration))) )

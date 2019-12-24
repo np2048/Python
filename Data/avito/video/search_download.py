@@ -9,6 +9,8 @@ from download_video import SearchDownload
 import parse_search
 import csv
 
+CSV_FILE_NAME = 'search.csv'
+
 # start timer and go
 timeStart = time.time()
 search = SearchDownload()
@@ -23,7 +25,7 @@ pagesCount = parse_search.pagesCount(bsSearch)
 # get items from search results
 itemList = parse_search.itemList(bsSearch)
 #print(itemList)
-parse_search.writeCsv(itemList)
+csv.writeCsv(itemList, CSV_FILE_NAME)
 
 # download all pages of search results
 for page in range(2, pagesCount+1):
@@ -31,7 +33,7 @@ for page in range(2, pagesCount+1):
     html =  search.getData(page) 
     bsSearch = BeautifulSoup(html, "html.parser")
     itemList = parse_search.itemList(bsSearch)
-    parse_search.writeCsv(itemList, append=True)
+    csv.writeCsv(itemList, CSV_FILE_NAME, append=True)
 
 timeDuration = - timeStart + time.time()
 print('Duration: {0} seconds'.format(int(ceil(timeDuration))) )
