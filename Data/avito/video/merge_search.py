@@ -91,6 +91,42 @@ def findGpu(caption, listGpu):
     #print(listResult)
     return (listResult)
 
+def chooseItemPairs(adv, listItem):
+    (caption, price, link) = adv
+    caption = caption.replace(' ', '')
+    result = []
+    match = []
+    for i in range(0, len(listItem)):
+        item = listItem[i]
+        match.append(0)
+        itemWords = item[0].split(' ')
+        for w in range(0, len(itemWords) - 1) :
+            word = itemWords[w] + itemWords[w + 1]
+            if caption.find(word) >= 0:
+                match[i] += 1 
+    maxMatch = max(match)
+    for i in range(0, len(match)):
+        if match[i] == maxMatch:
+            result.append(listItem[i])
+    return(result)
+
+def chooseItem(adv, listItem):
+    (caption, price, link) = adv
+    result = []
+    match = []
+    for i in range(0, len(listItem)):
+        item = listItem[i]
+        match.append(0.0)
+        itemWords = item[0].split(' ')
+        for word in itemWords :
+            if caption.find(word) >= 0:
+                match[i] += 1.0 / len(itemWords)
+    maxMatch = max(match)
+    for i in range(0, len(match)):
+        if match[i] == maxMatch:
+            result.append(listItem[i])
+    return(result)
+
 # start timer and go
 timeStart = time.time()
 
@@ -113,6 +149,12 @@ for item in listSearch:
     listGpu = findGpu(name, listOrigin)
     #print(listGpu) 
     #exit()
+    if len(listGpu) > 1 :
+        choose = chooseItem(item, listGpu)
+        if len(choose) > 0 : listGpu = choose
+    if len(listGpu) > 1 :
+        choose = chooseItemPairs(item, listGpu)
+        if len(choose) > 0 : listGpu = choose
     if len(listGpu) == 1 :
         (gpuName, gpuNameList, gpuPerf, gpuLink) = listGpu[0] 
         listRecognized.append([
@@ -132,7 +174,7 @@ print('Recognized: {0}\nUnknown: {1}'.format(
 #print(listRecognized)
 #csv.writeCsv(listRecognized, 'recognized.csv')
 csv.writeCsv(listUnknown, 'undefined.csv')
-print(listUnknown[-1])
+#print(listUnknown[-1])
 #print(listSearch[-1])
 #for lst in listUnknown[-1]:
  #   for lst1 in lst:
