@@ -5,6 +5,7 @@ import time
 from math import ceil
 import parse_search
 import re
+import csv
 
 def strFilter(caption):
     caption = caption.replace(
@@ -44,7 +45,7 @@ def listIn(lst, item):
             if i == item:
                 return(True)
     return(False)
-print(listIn([[1, 2], [3, 4]], 1))
+#print(listIn([[[1, 2], [3, 4], [5, 6]]], [5,6]))
 
 def listMerge(lst):
     result = []
@@ -53,10 +54,10 @@ def listMerge(lst):
         itemList = lst[i]
         for item in itemList:
             if listIn(lst[i+1:], item):
-                resultI += item
+                resultI += [item]
         if len(resultI) > 0 : result += [resultI]
     return(result)
-print(listMerge([[[1, 1], [2, 2], [3, 3]], [[2, 2], [3, 3], [4, 4]]]))
+#print(listMerge([[[1, 1], [3, 3], [2, 2]], [[2, 2], [3, 3], [4, 4]]]))
 #exit()
 
 def findGpu(caption, listGpu):
@@ -69,23 +70,25 @@ def findGpu(caption, listGpu):
         for gpu in listGpu:
             (gpuName, gpuNameWords, gpuPerf, gpuLink) = gpu
             if word in gpuNameWords :
-                listResWord.append([gpu])
+                listResWord.append(gpu)
         if (len(listResWord) == 0): continue
         listResult.append(listResWord)
-        listResult = listMerge(listResult)
+        #print(listResult)
+    listResult = listMerge(listResult)
+    #print(listResult)
     return (listResult)
 
 # start timer and go
 timeStart = time.time()
 
 # load gpu list
-listOrigin = parse_search.readCsv('gpulist.csv')
+listOrigin = csv.readCsv('gpulist.csv')
 listOrigin = listFilter(listOrigin)
 listOrigin = listSplit(listOrigin)
-#print(listOrigin)
+#print(listOrigin[-1])
 
 # load search results 
-listSearch = parse_search.readCsv('search.csv')
+listSearch = csv.readCsv('search.csv')
 listSearch = listFilter(listSearch)
 #print(listSearch)
 
@@ -95,12 +98,35 @@ listUnknown = []
 for item in listSearch:
     (name, price, link) = item
     listGpu = findGpu(name, listOrigin)
-    listUnknown.append(listGpu)
+    #print(listGpu) 
+    #exit()
+    if len(listGpu) == 1 :
+        (gpuName, gpuNameList, gpuPerf, gpuLink) = listGpu[0] 
+        listRecognized.append([
+                name, price, link, 
+                gpuName, gpuPerf, gpuLink
+                ])
+    else :
+        unknown = []
+        for gpu in listGpu:
+            (gpuName, gpuNameList, gpuPerf, gpuLink) = gpu 
+            unknown += [gpuName, gpuPerf]
+        listUnknown.append([
+                name + unknown
+                ])
+print('Recognized: {0}\nUnknown: {1}'.format(
+    len(listRecognized), 
+    len(listUnknown)
+    ))
+#print(listRecognized)
+#csv.writeCsv(listRecognized, 'recognized.csv')
+#csv.writeCsv(listUnknown, 'undefined.csv')
 print(listUnknown[-1])
-for lst in listUnknown[-1]:
-    for lst1 in lst:
-        for lst2 in lst1:
-            print(lst2[0])
+#print(listSearch[-1])
+#for lst in listUnknown[-1]:
+ #   for lst1 in lst:
+  #      print(lst1[0])
+   #     print(lst1[2])
     #print('{0} : {1}'.format(name, listGpu))
     #if len(listAds): print(listAds)
 

@@ -2,6 +2,8 @@
 
 from bs4 import BeautifulSoup
 
+import csv
+
 FILE_NAME = 'search.csv'
 URL_PREFIX = 'http://avito.ru'
 
@@ -29,19 +31,5 @@ def itemList(bsSearch):
         list.append((title, price, URL_PREFIX + href))
     return(list)
 
-def writeCsv(items, append=False):
-    fileOpenMode = 'w'
-    if append : fileOpenMode = 'a'
-    file = open(FILE_NAME, fileOpenMode)
-    for item in items:
-        file.write(';'.join(item) + '\n')
-    file.close()
-
-def readCsv(fileName):
-    data = []
-    file = open(fileName, "r")
-    lines = file.readlines()
-    file.close()
-    for line in lines:
-        data.append(line.split(';'))
-    return(data)
+#def writeCsv(items, append=false):
+ #   return ( csv.writeCsv(items, FILE_NAME, append) )
