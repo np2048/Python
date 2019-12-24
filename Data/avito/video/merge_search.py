@@ -131,7 +131,7 @@ print('Recognized: {0}\nUnknown: {1}'.format(
     ))
 #print(listRecognized)
 #csv.writeCsv(listRecognized, 'recognized.csv')
-#csv.writeCsv(listUnknown, 'undefined.csv')
+csv.writeCsv(listUnknown, 'undefined.csv')
 print(listUnknown[-1])
 #print(listSearch[-1])
 #for lst in listUnknown[-1]:
