@@ -39,13 +39,13 @@ def lstIntersection(list1, list2):
     return(res)
 #print(lstIntersection([[1],[ 2],[ 3]], [[2], [3], [5]]))
 
-def listIn(lst, item):
+def listIn(item, lst) :
     for lst1 in lst:
         for i in lst1:
             if i == item:
                 return(True)
     return(False)
-#print(listIn([[[1, 2], [3, 4], [5, 6]]], [5,6]))
+#print(listIn([3, 4], [[[1, 2], [3, 4], [5, 6]]]))
 
 def listMerge(lst):
     result = []
@@ -53,12 +53,20 @@ def listMerge(lst):
         resultI = []
         itemList = lst[i]
         for item in itemList:
-            if listIn(lst[i+1:], item):
+            if listIn(item, lst[i+1:]):
                 resultI += [item]
+                itemList.remove(item)
         if len(resultI) > 0 : result += [resultI]
     return(result)
 #print(listMerge([[[1, 1], [3, 3], [2, 2]], [[2, 2], [3, 3], [4, 4]]]))
 #exit()
+
+def listMakeFlat(lst):
+    result = []
+    for lst1 in lst:
+        for item in lst1:
+            result += [item]
+    return (result)
 
 def findGpu(caption, listGpu):
     listCaption = strSplit(caption)
@@ -74,7 +82,12 @@ def findGpu(caption, listGpu):
         if (len(listResWord) == 0): continue
         listResult.append(listResWord)
         #print(listResult)
-    listResult = listMerge(listResult)
+    count = 10
+    while len(listResult) > 1  and count > 0:
+        merge = listMerge(listResult)
+        if len(merge) > 0: listResult = merge
+        count -= 1
+    listResult = listMakeFlat(listResult)
     #print(listResult)
     return (listResult)
 
@@ -111,9 +124,7 @@ for item in listSearch:
         for gpu in listGpu:
             (gpuName, gpuNameList, gpuPerf, gpuLink) = gpu 
             unknown += [gpuName, gpuPerf]
-        listUnknown.append([
-                name + unknown
-                ])
+        listUnknown.append([name] + unknown)
 print('Recognized: {0}\nUnknown: {1}'.format(
     len(listRecognized), 
     len(listUnknown)
