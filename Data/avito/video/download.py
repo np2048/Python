@@ -10,7 +10,7 @@ import time
 
 class CacheDownload:
     DIR_NAME = "cache"
-    CACHE_VALID_TIME = 3600 * 24 * 99
+    CACHE_VALID_TIME = 3600 * 24 * 1
     VERBOSE = True
     DELAY_RETRY = 1 # wait time in seconds to retry download on error
     def __init__(this):
