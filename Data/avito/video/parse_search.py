@@ -19,6 +19,7 @@ def pagesCount(bsSearch):
     print('Total page count: {0}'.format(maxPage))
     return (maxPage)
 
+# parse html to get the list of items
 def itemList(bsSearch):
     bsItems = bsSearch.findAll('div', 
             class_='description item_table-description')
@@ -36,6 +37,7 @@ def strFilter(caption):
     caption = caption.replace(
             '-', ' ').replace(
             '.', ' ').replace(
+            'х', 'x').replace(
             '/', ' ')
     return (re.sub('\s\s+', ' ', caption).lower())
 
@@ -56,10 +58,10 @@ def listSplit(lst, index=0):
         result.append((item))
     return(result)
 
-def listIntersection(list1, list2):
+def listIntersect(list1, list2):
     res = []
     for item in list1:
-        if item in list2: res += item
+        if item in list2: res.append(item)
     return(res)
 
 def listIn(item, lst) :
@@ -91,9 +93,33 @@ def listMakeFlat(lst):
             result += [item]
     return (result)
 
+def findItemText(caption, listItems):
+    listResult = []
+    for item in listItems:
+        (name, nameWords, perf, link) = item
+        if caption.replace(' ', '').find(name.replace(' ', '')) >= 0 :
+            listResult.append(item)
+    return(listResult)
+
+def findItemNums(caption, listItems):
+    listResult = []
+    for item in listItems:
+        (name, nameWords, perf, link) = item
+        itemNums = re.findall('\d+', name)
+        for num in itemNums :
+            if len(num) <= 1 : continue
+            if caption.replace(' ', '').find(num) >= 0 :
+                if not item in listResult : listResult.append(item)
+    return(listResult)
+
 def findItem(caption, listItems):
     listCaption = strSplit(caption)
     #print(listCaption)
+    listText = findItemText(caption, listItems)
+    if len(listText) == 0 :
+        listText = findItemNums(caption, listItems)
+    if len(listText) == 1:
+        return(listText)
     listResult = []
     for word in listCaption:
         if len(word) < 2 : continue
@@ -112,6 +138,12 @@ def findItem(caption, listItems):
         count -= 1
     listResult = listMakeFlat(listResult)
     #print(listResult)
+    if len(listResult) > 1 and len(listText) > 0 :
+        listInt = listIntersect(listResult, listText)
+        if len(listInt) > 0 : 
+            listResult = listInt
+        else :
+            listResult = listText
     return (listResult)
 
 def chooseItemPairs(adv, listItem):
