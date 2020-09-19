@@ -113,13 +113,23 @@ class Dir:
         try:
             os.system(command)
         except :
-            print("error: " + command)
+            print("Error: " + command)
         print("")
    
-#main run
+
+
+#####################################################################
+# main run
+#####################################################################
+
+# Get path of current script
 DirName = os.path.dirname( os.path.abspath( sys.argv[0] )) 
+
+# Add argument to current path
 if (len(sys.argv) > 1 and sys.argv[1] != '') :
     DirName += os.sep + sys.argv[1]
+
+# run dir.install procedure
 currentDir = Dir(DirName)
 currentDir.Install()
 
