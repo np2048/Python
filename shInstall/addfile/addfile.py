@@ -32,7 +32,7 @@ os.makedirs(pathDest, exist_ok=True)
 # If file with the same name already exists then
 # save existent file as <filename>.old
 filename = os.path.basename( sys.argv[2] )
-pathDestFile = pathDest + filename
+pathDestFile = pathDest +os.sep+  filename
 if os.path.isfile(pathDestFile) :
     pathDestFileOld = pathDestFile + '.old'
     if os.path.isfile(pathDestFileOld):
