@@ -25,14 +25,14 @@ def PrintError(Action, FileName):
 
 # Create destination path
 path = os.path.dirname( os.path.abspath( sys.argv[0] ))
-pathDest = path + os.sep + sys.argv[1]
+pathDest = path + os.sep + sys.argv[1] + os.sep
 #print(pathDest)
 os.makedirs(pathDest, exist_ok=True)
 
 # If file with the same name already exists then
 # save existent file as <filename>.old
 filename = os.path.basename( sys.argv[2] )
-pathDestFile = pathDest +os.sep+  filename
+pathDestFile = pathDest + filename
 if os.path.isfile(pathDestFile) :
     pathDestFileOld = pathDestFile + '.old'
     if os.path.isfile(pathDestFileOld):
@@ -40,12 +40,18 @@ if os.path.isfile(pathDestFile) :
     os.rename(pathDestFile, pathDestFileOld)
     PrintGray('Backup', os.path.basename(pathDestFileOld))
 
+# Transform absolute path to user path (/home/usr -> ~/)
+# if current user home path is used
+pathTarget = sys.argv[2]
+pathHome = os.path.expanduser('~')
+pathTargetRel = pathTarget.replace(pathHome, '~')
+
 # Copy new file to destination path
-if not os.path.isfile(sys.argv[2]) : 
-    PrintError("Incorrect file path", sys.argv[2])
+if not os.path.isfile(pathTarget) : 
+    PrintError("Incorrect file path", pathTarget)
     exit()
-shutil.copyfile(sys.argv[2], pathDestFile)
-PrintSuccess('Added', sys.argv[2])
+shutil.copyfile(pathTarget, pathDestFile)
+PrintSuccess('Added', pathTarget)
 
 # Create path directory
 pathPath = pathDest + 'path' +os.sep
@@ -54,5 +60,6 @@ os.makedirs(pathPath, exist_ok=True)
 # Create path file
 filenamePath = pathPath + filename
 f = open(filenamePath, 'w')
-f.write(sys.argv[2])
+f.write(pathTargetRel)
+PrintGray('Path', pathTargetRel)
 f.close()
