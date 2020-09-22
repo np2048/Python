@@ -50,7 +50,7 @@ pathTargetRel = pathTarget.replace(pathHome, '~')
 if not os.path.isfile(pathTarget) : 
     PrintError("Incorrect file path", pathTarget)
     exit()
-shutil.copyfile(pathTarget, pathDestFile)
+shutil.copy2(pathTarget, pathDestFile)
 PrintSuccess('Added', pathTarget)
 
 # Create path directory
