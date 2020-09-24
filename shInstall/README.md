@@ -5,7 +5,7 @@ This scripts are used for copying Linux software configuration files from one ma
 Common usage workflow example. 
 Let's say you want to backup your .vimrc configuration file for VIM, save it on github and then download and install it on other PC. Run command:
 
-$ ./addfile.py Config/vim ~/.vimrc
+$ ./addfile.py vim ~/.vimrc
 
 This will create Config/vim directory and copy your .vimrc file into it. Also it will create Config/vim/path/.vimrc file where the path for an actual .vimrc will be stored. Once it's done you can commit the changes to your github repository:
 
@@ -21,7 +21,7 @@ On any other PC you'll be able to clone your config repository and install confi
 
 $ git clone <your github config repository URL> Config
   
-$ ./install.py Config/vim
+$ Config/install.py vim
 
 This will backup your current system .vimrc config file (actually rename it to .vimrc.default) and copy .vimrc from the reposytory to the system path stored it the path/.vimrc file
 
