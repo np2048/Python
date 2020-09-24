@@ -7,8 +7,7 @@ Let's say you want to backup your .vimrc configuration file for VIM, save it on 
 
 $ ./addfile.py Config/vim ~/.vimrc
 
-This will create Config/vim directory and copy your .vimrc file into it. Also it will create Config/vim/path/.vimrc file where the path for an actual .vimrc will be stored
-When it's done you can commit the changes to your github repository:
+This will create Config/vim directory and copy your .vimrc file into it. Also it will create Config/vim/path/.vimrc file where the path for an actual .vimrc will be stored. Once it's done you can commit the changes to your github repository:
 
 $ git add .
 $ git commit -m 'VIM config file'
