@@ -9,6 +9,8 @@ $ ./addfile.py Config/vim ~/.vimrc
 
 This will create Config/vim directory and copy your .vimrc file into it. Also it will create Config/vim/path/.vimrc file where the path for an actual .vimrc will be stored. Once it's done you can commit the changes to your github repository:
 
+$ <Create new github repository for your config files if you don't have it yet>
+
 $ git add .
 
 $ git commit -m 'VIM config file'
@@ -19,9 +21,9 @@ On any other PC you'll be able to clone your config repository and install confi
 
 $ git clone <your github config repository URL> Config
   
-$ Config/install.py vim
+$ ./install.py Config/vim
 
-This will backup your current .vimrc config file (actually rename it to .vimrc.default) and copy .vimrc from the reposytory to the system path stored it the path/.vimrc file
+This will backup your current system .vimrc config file (actually rename it to .vimrc.default) and copy .vimrc from the reposytory to the system path stored it the path/.vimrc file
 
 When a PC already have local copy of your config repository simply run
 
