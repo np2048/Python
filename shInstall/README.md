@@ -1,8 +1,8 @@
-#Simple configuration files management system
+# Simple configuration files management system
 
 This scripts are used for copying Linux software configuration files from one machine to another and also store and synchronize them on Github.
 
-##Common usage workflow example
+## Common usage workflow example
 Let's say you want to backup your .vimrc configuration file for VIM, save it on github and then download and install it on other PC. Run command:
 
     $ ./addfile.py vim ~/.vimrc
@@ -28,7 +28,7 @@ When a PC already have local copy of your Config repository simply run
 
 to update and synchronize your local Config with the repository.
 
-##Template system support
+## Template system support
 
 The config files stored this way are processed with Jinja2 by the install.py script that allows to have some configuration options specific to any particular machine. The hostname parameter is used in the templates:
 
