@@ -30,7 +30,7 @@ to update and synchronize your local Config with the repository.
 
 ## Template system support
 
-The config files stored this way are processed with *Jinja2* by the **install.py** script. It allows you to have some configuration options specific to any particular machine. The **hostname** parameter of your operating system is used to set the value of the **device** variable that is passed to the templates:
+The config files stored this way are processed with [*Jinja2*](https://jinja.palletsprojects.com/en/2.11.x/) by the **install.py** script. It allows you to have some configuration options specific to any particular machine. The **hostname** parameter of your operating system is used to set the value of the **device** variable that is passed to the templates:
 
     {% if device == 'HomePC' %}
     Include this string into the config file for my HomePC
