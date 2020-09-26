@@ -10,8 +10,8 @@ In order to create a storage for your config files and start syncing it with you
 1. Create a local directory where all the copies of your config files will be stored
 2. Copy into the directory the following scripts from this repository:
 
-    1. addfile/addfile.py
-    2. install/install.py
+1. addfile/addfile.py
+2. install/install.py
 
 3. Create a Github repository into the directory or setup synchronization with a file sharing service
 
