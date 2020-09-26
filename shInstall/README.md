@@ -8,16 +8,15 @@ This scripts are used for copying Linux software configuration files from one ma
 In order to create a storage for your config files and start syncing it with your other machines using Github (or other VCS and file sharing services) you have to follow this steps:
 
 1. Create a local directory where all the copies of your config files will be stored
-2. Copy into the directory the following scripts from this repository:
+1. Copy into the directory the following scripts from this repository:
     * addfile/addfile.py
     * install/install.py
-3. Create a Github repository into the directory or setup synchronization with a file sharing service
-4. You'll need Python and [*Jinja2*](https://jinja.palletsprojects.com/en/2.11.x/) module to use this scripts so install them to if you didn't already:
+1. Create a Github repository into the directory or setup synchronization with a file sharing service
+1. You'll need Python and [*Jinja2*](https://jinja.palletsprojects.com/en/2.11.x/) module to use this scripts so install them to if you haven't done this already:
 
-
-    $ <Install Python>
-    $ pip install jinja2
-
+            $ <Install Python>
+            $ pip install jinja2
+            
 That's it. You just need Python and a directory with a couple of script files into it to start.
 
 
