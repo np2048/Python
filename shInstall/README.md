@@ -49,7 +49,7 @@ When a PC already has a local copy of your **Config** repository simply run
     $ git pull 
     $ ./install.py vim 
 
-to update and synchronize your local **Config** with the repository.
+to synchronize your local **Config** with the repository and update vim config file in your system.
 
 
 ## Template system support
