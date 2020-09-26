@@ -14,8 +14,8 @@ In order to create a storage for your config files and start syncing it with you
 1. Create a Github repository into the directory or setup synchronization with a file sharing service
 1. You'll need Python and [*Jinja2*](https://jinja.palletsprojects.com/en/2.11.x/) module to use this scripts so install them to if you haven't done this already:
 
-            $ <Install Python>
-            $ pip install jinja2
+    $ <Install Python>
+    $ pip install jinja2
             
 That's it. You just need Python and a directory with a couple of script files into it to start.
 
