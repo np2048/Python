@@ -37,6 +37,8 @@ This will create *vim* sub directory at current path and copy your *.vimrc* file
     $ git commit -m 'VIM config file'
     $ git push
 
+>You can add some extra files to your *vim* storage sub directory: some scripts to install extensions and so on. Those files won't be copied to the new system automatically if you don't add a path file for them (by hand or by running **addfile.py** script).
+
 On any other PC you'll be able to clone your config repository and install config files of any desired program by running the **install.py** script:
 
     $ git clone <your github config repository URL> Config
@@ -67,7 +69,7 @@ The config files stored this way are processed with [*Jinja2*](https://jinja.pal
 
 ## Tests
 
-There are some test scripts in this repository that I have been using during the development process. You don't need to copy them to your Config storage directory. You only need the following ones:
+There are some test scripts in this repository that I have been using during the development process. You don't need to copy them to your **Config** storage directory. You only need the following ones:
 
 *   **addfile.py** : To add a new config file into the storage
 *   **install.py** : To copy all config files from a sub directory of the storage into the system
