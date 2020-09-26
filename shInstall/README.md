@@ -21,7 +21,7 @@ On any other PC you'll be able to clone your config repository and install confi
 
 This will backup your current system *.vimrc* config file (actually rename it to *.vimrc.default* if it doesn't exist and to *.vimrc.old* if it does) and copy *.vimrc* from the repository to the system path stored it the *path/.vimrc* file
 
-When a PC already have local copy of your Config repository simply run
+When a PC already has local copy of your Config repository simply run
 
     $ git pull 
     $ ./install.py vim 
