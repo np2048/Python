@@ -8,7 +8,7 @@
 #
 # If a file with the same name already exists in the library
 # it will be renamed to <filename>.old
-# If <filename>.old already exists it will be deleted.
+# If <filename>.old already exists too it will be overwrited
 
 import os
 import sys
