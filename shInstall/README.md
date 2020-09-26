@@ -16,8 +16,8 @@ In order to create a storage for your config files and start syncing it with you
 
     $ <Install Python>
     $ pip install jinja2
-            
-That's it. You just need Python and a directory with a couple of script files into it to start.
+
+That's pretty much it. You just need Python and a directory with a couple of script files into it to start.
 
 
 ## Example of a common use with Github
