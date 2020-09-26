@@ -1,15 +1,38 @@
 # Simple configuration files management system
 
-This scripts are used for copying Linux software configuration files from one machine to another and also store and synchronize them on Github.
+This scripts are used for copying Linux software configuration files from one machine to another and also store and synchronize them on Github or any file sharing service.
 
-## Example of a common use
-Let's say you want to backup your *.vimrc* configuration file for *VIM*, save it on Github and then download and install it on other PC. Run **addfile.py** script:
+
+## Installation
+
+In order to create a storage for your config files and start syncing it with your other machines using Github (or other VCS and file sharing services) you have to follow this steps:
+
+1. Create a local directory where all the copies of your config files will be stored
+1. Copy into the directory the following scripts from this repository:  
+    2. addfile/addfile.py
+    2. install/install.py
+1. Create a Github repository into the directory or setup synchronization with a file sharing service
+
+That's it. You just need a directory with a couple of script files into it to start.
+
+
+## Example of a common use with Github
+Let's say you want to backup your *.vimrc* configuration file for *VIM*, save it on Github and then download and install it on other PC. 
+
+Setup the storage and copy the scripts as described in the **Installation** section above:
+
+    $ mkdir ~/Config
+    $ cp addfile/addfile.py ~/Config
+    $ cp install/install.py ~/Config
+    $ cd ~/Config
+
+Run **addfile.py** script:
 
     $ ./addfile.py vim ~/.vimrc
 
 This will create *vim* sub directory at current path and copy your *.vimrc* file into it. It will also create *vim/path/.vimrc* file where the path for an actual *.vimrc* will be stored. Once it's done you can commit the changes to your Github repository:
 
-    $ <Create new github repository for your config files if you don't have it yet>
+    $ <Create new github repository for your config files if you don't have it already>
     $ git add .
     $ git commit -m 'VIM config file'
     $ git push
@@ -28,6 +51,7 @@ When a PC already has a local copy of your Config repository simply run
 
 to update and synchronize your local Config with the repository.
 
+
 ## Template system support
 
 The config files stored this way are processed with [*Jinja2*](https://jinja.palletsprojects.com/en/2.11.x/) by the **install.py** script. It allows you to have some configuration options specific to any particular machine. The **hostname** parameter of your operating system is used to set the value of the **device** variable that is passed to the templates:
@@ -39,3 +63,11 @@ The config files stored this way are processed with [*Jinja2*](https://jinja.pal
     {% else %}
     This string will be included on any other devices
     {% endif %}
+
+
+## Tests
+
+There are some test scripts in this repository that I have been using during the development process. You don't need to copy them to your Config storage directory. You only need the following ones:
+
+*   **addfile.py** : To add a new config file into the storage
+*   **install.py** : To copy all config files from a sub directory of the storage into the system
