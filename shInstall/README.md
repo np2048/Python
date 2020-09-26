@@ -2,7 +2,7 @@
 
 This scripts are used for copying Linux software configuration files from one machine to another and also store and synchronize them on Github.
 
-## Common usage workflow example
+## Example of a common use
 Let's say you want to backup your *.vimrc* configuration file for *VIM*, save it on Github and then download and install it on other PC. Run **addfile.py** script:
 
     $ ./addfile.py vim ~/.vimrc
@@ -14,12 +14,12 @@ This will create *vim* sub directory at current path and copy your *.vimrc* file
     $ git commit -m 'VIM config file'
     $ git push
 
-On any other PC you'll be able to clone your config repository and install config files of any desired program by running the install script:
+On any other PC you'll be able to clone your config repository and install config files of any desired program by running the **install.py** script:
 
     $ git clone <your github config repository URL> Config
     $ Config/install.py vim
 
-This will backup your current system *.vimrc* config file (actually rename it to *.vimrc.default*) and copy *.vimrc* from the repository to the system path stored it the *path/.vimrc* file
+This will backup your current system *.vimrc* config file (actually rename it to *.vimrc.default* if it doesn't exist and to *.vimrc.old* if it does) and copy *.vimrc* from the repository to the system path stored it the *path/.vimrc* file
 
 When a PC already have local copy of your Config repository simply run
 
