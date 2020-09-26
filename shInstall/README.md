@@ -3,11 +3,11 @@
 This scripts are used for copying Linux software configuration files from one machine to another and also store and synchronize them on Github.
 
 ## Common usage workflow example
-Let's say you want to backup your .vimrc configuration file for VIM, save it on github and then download and install it on other PC. Run command:
+Let's say you want to backup your *.vimrc* configuration file for *VIM*, save it on Github and then download and install it on other PC. Run **addfile.py** script:
 
     $ ./addfile.py vim ~/.vimrc
 
-This will create Config/vim directory and copy your .vimrc file into it. Also it will create Config/vim/path/.vimrc file where the path for an actual .vimrc will be stored. Once it's done you can commit the changes to your github repository:
+This will create *vim* sub directory at current path and copy your *.vimrc* file into it. It will also create *vim/path/.vimrc* file where the path for an actual *.vimrc* will be stored. Once it's done you can commit the changes to your Github repository:
 
     $ <Create new github repository for your config files if you don't have it yet>
     $ git add .
@@ -19,7 +19,7 @@ On any other PC you'll be able to clone your config repository and install confi
     $ git clone <your github config repository URL> Config
     $ Config/install.py vim
 
-This will backup your current system .vimrc config file (actually rename it to .vimrc.default) and copy .vimrc from the reposytory to the system path stored it the path/.vimrc file
+This will backup your current system *.vimrc* config file (actually rename it to *.vimrc.default*) and copy *.vimrc* from the repository to the system path stored it the *path/.vimrc* file
 
 When a PC already have local copy of your Config repository simply run
 
@@ -30,7 +30,7 @@ to update and synchronize your local Config with the repository.
 
 ## Template system support
 
-The config files stored this way are processed with Jinja2 by the install.py script that allows to have some configuration options specific to any particular machine. The hostname parameter is used in the templates:
+The config files stored this way are processed with *Jinja2* by the **install.py** script. It allows you to have some configuration options specific to any particular machine. The **hostname** parameter of your operating system is used to set the value of the **device** variable that is passed to the templates:
 
     {% if device == 'HomePC' %}
     Include this string into the config file for my HomePC
