@@ -8,12 +8,12 @@ This scripts are used for copying Linux software configuration files from one ma
 In order to create a storage for your config files and start syncing it with your other machines using Github (or other VCS and file sharing services) you have to follow this steps:
 
 1. Create a local directory where all the copies of your config files will be stored
-1. Copy into the directory the following scripts from this repository:
+2. Copy into the directory the following scripts from this repository:
 
-    2. addfile/addfile.py
+    1. addfile/addfile.py
     2. install/install.py
 
-1. Create a Github repository into the directory or setup synchronization with a file sharing service
+3. Create a Github repository into the directory or setup synchronization with a file sharing service
 
 That's it. You just need a directory with a couple of script files into it to start.
 
