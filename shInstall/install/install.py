@@ -47,6 +47,10 @@ class Dir:
         return result
     def RenderFile(self, Path):
         Content = self.ReadFile(Path) # read source file
+        # render file using Jinja if it is not a Lua file.
+        # Lua's syntax is not compatible with Jinja as it contains multiple {{ strings
+        if os.path.splitext(Path)[1] == '.lua' :
+            return Content
         template = Template(Content, trim_blocks=True) # render source file using template engine
         hostname = socket.gethostname() # Get PC name
         Content = template.render(device=hostname)
