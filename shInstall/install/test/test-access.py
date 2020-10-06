@@ -30,7 +30,7 @@ for fileName, fileContent in dataTestFiles.items():
     pathFile.Write(targetDir.path + os.sep + testFile.name)
 
 # run INSTALL
-os.system("./install.py " + dataDir.Name() )
+os.system("../install.py test/" + dataDir.Name() )
 
 # return error if target directory not created
 if not targetDir.Exists():

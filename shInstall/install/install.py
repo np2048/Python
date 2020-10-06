@@ -23,6 +23,7 @@ def PrintError(Action, FileName):
    print('\033[91m' + Action + '\033[0m ' + FileName)
 
 class Dir:
+    TemplateIgnoreExt = ['.lua', '.png', '.jpg', '.jpeg']
     def __init__(self, path):
         self.path = path
         self.read()
@@ -49,7 +50,7 @@ class Dir:
         Content = self.ReadFile(Path) # read source file
         # render file using Jinja if it is not a Lua file.
         # Lua's syntax is not compatible with Jinja as it contains multiple {{ strings
-        if os.path.splitext(Path)[1] == '.lua' :
+        if os.path.splitext(Path)[1] in self.TemplateIgnoreExt :
             return Content
         template = Template(Content, trim_blocks=True) # render source file using template engine
         hostname = socket.gethostname() # Get PC name

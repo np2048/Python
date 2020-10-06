@@ -25,7 +25,7 @@ for fileName, fileContent in dataTestFiles.items():
     pathFile.Write(TargetDir.path + os.sep + testFile.name)
 
 # run INSTALL
-os.system("./install.py " + dataDir.Name() )
+os.system("../install.py test/" + dataDir.Name() )
 
 # return error if target directory not created
 if not TargetDir.Exists():
@@ -60,7 +60,7 @@ for testFile in filesTarget :
 TargetFile = filesTarget[0]
 BackupFileContent = "new content"
 TargetFile.Write(BackupFileContent)
-os.system("./install.py " + dataDir.Name() )
+os.system("../install.py test/" + dataDir.Name() )
 
 # .default file must exist
 BackupFile = File(TargetDir.path, TargetFile.name + '.default')
@@ -77,7 +77,7 @@ if not BackupFile.Read() == BackupFileContent :
 # modify target file contents
 BackupFileContent = "new content"
 TargetFile.Write(BackupFileContent)
-os.system("./install.py " + dataDir.Name() )
+os.system("../install.py test/" + dataDir.Name() )
 
 # .default file must exist
 BackupFile = File(TargetDir.path, TargetFile.name + '.old')
@@ -92,7 +92,7 @@ if not BackupFile.Read() == BackupFileContent :
 
 # run install script one again and make sure there is now WRITE message as log output
 # (target file already exists and is the same, so no rewrite is needed
-result = subprocess.run(["./install.py", dataDir.Name()], stdout=subprocess.PIPE)
+result = subprocess.run(["../install.py", "test/" + dataDir.Name()], stdout=subprocess.PIPE)
 result = result.stdout.decode('utf-8')
 if result != '':
     PrintError("9. Extra output (no changes were made after last run):")

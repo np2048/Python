@@ -1,1 +1,0 @@
-/home/dmp/Scripts/Python/shInstall/target/config.txt
