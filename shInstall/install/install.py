@@ -20,7 +20,7 @@
 
 # Files with the following extensions won't be processed by the
 # template engine. Insted of this they will be just copyed "as is"
-TemplateIgnoreExt = ['.lua', '.png', '.jpg', '.jpeg']
+TemplateIgnoreExt = ['.lua', '.png', '.jpg', '.jpeg', 'otf']
 
 # Try to create symbolic links instead of copying files if True.
 # Value will be set to True if -l or --list argument is passed.
