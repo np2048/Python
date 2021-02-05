@@ -14,6 +14,8 @@ SysLib = {
     'swap'  : '2 roll',
     'rot'   : '3 roll',
     'unrot' : '3 rolld',
+    'rolla' : 'depth roll',
+    'rollad': 'depth rolld',
     'drop2' : '2 dropn',
     'nip'   : 'swap drop',
     'neg'   : '0 swap -'
