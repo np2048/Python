@@ -109,7 +109,10 @@ class RPN_Calc :
         return False
     def interpret_single_ariphmetic (self, command):
         if command == 'sum' : 
-            self.VarStack.append( sum(self.VarStack) )
+            nums = []
+            for i in self.VarStack :
+                if is_number(i) : nums.append(i)
+            self.VarStack.append( sum(nums) )
             return True
         if command == '+' :
             x = self.pop()
