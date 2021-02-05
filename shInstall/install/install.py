@@ -1,10 +1,35 @@
 #!/usr/bin/python3
 
-# This script is for copying the files to the current directory from the system.
-# The actual path of the original files should be stored in the "path/" subdirectory.
-# The name of a file in the "path/" subdirectory matches the copyed file name.
+# This script if for copying config files stored in the library to the system.
+# "Library" is actually the current directory. 
+# Config files for a program are stored in subdirectories. 
+#
+# For example: if you have your vim configs in the vim subdirectory you may
+# run "./install.py vim" and all the files from vim subdirectory will be
+# copied to their destination paths. The destination paths of all files 
+# to copy in this example should be stored in the vim/path subdirectory.
+# 
+# To add a file to this library run ./addfile.py <dir> <file_path>
+# For example to add vim config to the library run:
+# ./addfile vim ~/.vimrc
 
-# If run with "install" argument it will copy the files from local directory TO the system.
+
+
+#####################################################################
+# Global variables
+
+# Files with the following extensions won't be processed by the
+# template engine. Insted of this they will be just copyed "as is"
+TemplateIgnoreExt = ['.lua', '.png', '.jpg', '.jpeg', 'otf']
+
+# Try to create symbolic links instead of copying files if True.
+# Value will be set to True if -l or --list argument is passed.
+argvLink = False
+
+
+
+#####################################################################
+# Core code
 
 import os
 import stat
@@ -23,7 +48,6 @@ def PrintError(Action, FileName):
    print('\033[91m' + Action + '\033[0m ' + FileName)
 
 class Dir:
-    TemplateIgnoreExt = ['.lua', '.png', '.jpg', '.jpeg']
     def __init__(self, path):
         self.path = path
         self.read()
@@ -50,7 +74,7 @@ class Dir:
         Content = self.ReadFile(Path) # read source file
         # render file using Jinja if it is not a Lua file.
         # Lua's syntax is not compatible with Jinja as it contains multiple {{ strings
-        if os.path.splitext(Path)[1] in self.TemplateIgnoreExt :
+        if os.path.splitext(Path)[1] in TemplateIgnoreExt :
             return Content
         template = Template(Content, trim_blocks=True) # render source file using template engine
         hostname = socket.gethostname() # Get PC name
@@ -127,12 +151,47 @@ class Dir:
 # main run
 #####################################################################
 
+# Process arguments
+argvSet = set(sys.argv[1:])
+if '--help' in argvSet or '-h' in argvSet :
+    print(  
+        "\nUsage: %(app)s SUBDIRECTORY [OPTIONS]\n"
+        "\tSUBDIRECTORY\tname of a subdirectory at %(app_name)s path\n"
+        "\t-l, --link\tTry to create symlinks instead of copying when possible\n"
+        "\n"
+        "Symbolic link can be added only when no Jinja tags are used in a file\n"
+        "and file owner of the source matches to the destination file.\n"
+        % { 'app' : sys.argv[0], 
+            'app_name' : os.path.basename(sys.argv[0]) }
+    )
+    exit(1)
+
+if '--link' in argvSet :
+    argvLink = True
+    argvSet.remove('--link')
+if '-l' in argvSet :
+    argvLink = True
+    argvSet.remove('-l')
+#if argvLink : print("Link")
+
+argvPath = ''
+argvList = list(argvSet)
+if len(argvList) > 0 :
+    argvPath = argvList[0]
+if not argvPath :
+    print(  
+        "%(app)s: missing operand\n"
+        "Try '%(app)s --help' for more information."
+        % {'app' : sys.argv[0] }
+    )
+    exit(1)
+
 # Get path of current script
 DirName = os.path.dirname( os.path.abspath( sys.argv[0] )) 
 
 # Add argument to current path
-if (len(sys.argv) > 1 and sys.argv[1] != '') :
-    DirName += os.sep + sys.argv[1]
+if (argvPath) :
+    DirName += os.sep + argvPath
 
 # run dir.install procedure
 currentDir = Dir(DirName)
