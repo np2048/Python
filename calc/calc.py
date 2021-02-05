@@ -234,7 +234,7 @@ class RPN_Calc :
                 return False
             self.Memory[name] = str(value)
             return True
-        if command in ['read', 'rcl'] :
+        if command in ['read', 'recall', 'rcl'] :
             name = self.pop()
             if len(self.Errors) : return False
             if not is_string(name) : 
