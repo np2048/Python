@@ -142,7 +142,7 @@ class RPN_Calc :
             if len(self.Errors) : return False
             self.VarStack.append( y * x )
             return True
-        if command == '**' :
+        if command in ['**', '^'] :
             x = self.pop()
             y = self.pop()
             if len(self.Errors) : return False
