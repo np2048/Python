@@ -41,6 +41,7 @@ def is_number(s):
     return False
 
 def is_string(s):
+    if not is_number(s) : return True
     if s[0] == '"' and s[-1] == '"' : return True
     if s[0] == "'" and s[-1] == "'" : return True
     return False
@@ -59,8 +60,10 @@ class RPN_Calc :
         print()
         print("[", len(self.VarStack), "]")
         for var in self.VarStack:
-            if is_number(var) and var.is_integer() : var = int(var)
-            print(" ", round(var, self.round))
+            if is_number(var) : 
+                if var.is_integer() : var = int(var)
+                print(" ", round(var, self.round))
+            else : print(" ", var)
         return None
     def backup(self) :
         self.VarStackBackup = self.VarStack.copy()
@@ -238,7 +241,7 @@ class RPN_Calc :
             return True
         return False
     def interpret_single_memory (self, command) :
-        if command in ['store', 'str', 'sto'] :
+        if command in ['store', 'str', 'sto', '='] :
             name = self.pop()
             value = self.pop()
             if len(self.Errors) : return False
@@ -269,9 +272,6 @@ class RPN_Calc :
         if is_number(command) : 
             self.push(float(command))
             return True
-        if is_string(command) : 
-            self.push(command)
-            return True
         if self.interpret_single_ariphmetic(command) :      return True
         if self.interpret_single_ariphmetic_div(command) :  return True
         if self.interpret_single_roll(command) :            return True
@@ -286,7 +286,10 @@ class RPN_Calc :
             self.save_memory()
             self.Run = False
             return True
-        self.Errors.append('Command unknown')
+        #self.Errors.append('Command unknown')
+        if is_string(command) : 
+            self.push(command)
+            return True
         return False
     def interpret(self, command_string) :
         for command in command_string.split():
