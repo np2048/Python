@@ -105,18 +105,21 @@ class RPN_Calc :
         try:
             return self.VarStack.pop()
         except IndexError : self.error_index()
+    def push (self, value) :
+        if is_number(value) : value = round(value, self.round_max)
+        self.VarStack.append(value)
     def interpret_single_ariphmetic_div (self, command) :
         if command == '/' :
             x = self.pop()
             y = self.pop()
             if len(self.Errors) : return False
-            self.VarStack.append( y / x )
+            self.push( y / x )
             return True
         if command == '%' :
             x = self.pop()
             y = self.pop()
             if len(self.Errors) : return False
-            self.VarStack.append( y % x )
+            self.push( y % x )
             return True
         return False
     def interpret_single_ariphmetic (self, command):
@@ -124,31 +127,31 @@ class RPN_Calc :
             nums = []
             for i in self.VarStack :
                 if is_number(i) : nums.append(i)
-            self.VarStack.append( sum(nums) )
+            self.push( sum(nums) )
             return True
         if command == '+' :
             x = self.pop()
             y = self.pop()
             if len(self.Errors) : return False
-            self.VarStack.append( y + x )
+            self.push( y + x )
             return True
         if command == '-' :
             x = self.pop()
             y = self.pop()
             if len(self.Errors) : return False
-            self.VarStack.append( y - x )
+            self.push( y - x )
             return True
         if command == '*' :
             x = self.pop()
             y = self.pop()
             if len(self.Errors) : return False
-            self.VarStack.append( y * x )
+            self.push( y * x )
             return True
         if command in ['**', '^'] :
             x = self.pop()
             y = self.pop()
             if len(self.Errors) : return False
-            self.VarStack.append( y ** x )
+            self.push( y ** x )
             return True
         return False
     def interpret_single_roll (self, command):
@@ -158,8 +161,8 @@ class RPN_Calc :
             a = []
             for i in range(1, depth+1) : a.append( self.pop() )
             if len(self.Errors) : return False
-            for i in range(depth-2, -1, -1) : self.VarStack.append( a[i] )
-            self.VarStack.append( a[depth-1] )
+            for i in range(depth-2, -1, -1) : self.push( a[i] )
+            self.push( a[depth-1] )
             return True
         return False
     def interpret_single_rolld (self, command) :
@@ -169,8 +172,8 @@ class RPN_Calc :
             a = []
             for i in range(1, depth+1) : a.append( self.pop() )
             if len(self.Errors) : return False
-            self.VarStack.append( a[0] )
-            for i in range(depth-1, 1-1, -1) : self.VarStack.append( a[i] )
+            self.push( a[0] )
+            for i in range(depth-1, 1-1, -1) : self.push( a[i] )
             return True
         return False
     def interpret_single_pick (self, command):
@@ -179,7 +182,7 @@ class RPN_Calc :
             if len(self.Errors) : return False
             try :
                 y = self.VarStack[-x]
-                self.VarStack.append( y )
+                self.push( y )
             except IndexError : self.error_index()
             return True
         if command == 'unpick' :
@@ -194,8 +197,8 @@ class RPN_Calc :
         if command in ['dup', 'push'] : 
             last = self.pop()
             if len(self.Errors) : return False
-            self.VarStack.append( last )
-            self.VarStack.append( last )
+            self.push( last )
+            self.push( last )
             return True
         if command == 'dupn' :
             x = int( self.pop() )
@@ -203,7 +206,7 @@ class RPN_Calc :
             try :
                 for i in range(x) :
                     y = self.VarStack[-x]
-                    self.VarStack.append( y )
+                    self.push( y )
             except IndexError : self.error_index()
             return True
         if command == 'ndupn' :
@@ -211,8 +214,8 @@ class RPN_Calc :
             value = self.pop()
             if len(self.Errors) : return False
             for i in range( int(n) ) :
-                self.VarStack.append( value )
-            self.VarStack.append( n )
+                self.push( value )
+            self.push( n )
             return True
         return False
     def interpret_single_drop (self, command) :
@@ -228,7 +231,7 @@ class RPN_Calc :
         return False
     def interpret_single_helper (self, command) :
         if command == 'depth' : 
-            self.VarStack.append( float( len(self.VarStack) ) )
+            self.push( float( len(self.VarStack) ) )
             return True
         if command in ['clear', 'clr'] : 
             self.VarStack.clear()
@@ -264,10 +267,10 @@ class RPN_Calc :
     def interpret_single (self, command):
         if len(self.Errors) : return False
         if is_number(command) : 
-            self.VarStack.append(float(command))
+            self.push(float(command))
             return True
         if is_string(command) : 
-            self.VarStack.append(command)
+            self.push(command)
             return True
         if self.interpret_single_ariphmetic(command) :      return True
         if self.interpret_single_ariphmetic_div(command) :  return True
