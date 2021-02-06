@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import unicodedata
+import os
+import sys
 
 #== Data and variables =========================================
 
@@ -18,7 +20,9 @@ SysLib = {
     'rollad': 'depth rolld',
     'drop2' : '2 dropn',
     'nip'   : 'swap drop',
-    'neg'   : '0 swap -'
+    'neg'   : '0 swap -',
+    'keep1' : 'rollad depth 1 - dropn',
+    'keep2' : 'rollad rollad depth 2 - dropn',
 }
 
 
@@ -77,15 +81,19 @@ class RPN_Calc :
         needed = self.Memory != self.MemoryBackup
         if needed : self.Memory = self.MemoryBackup
         return needed
+    def get_current_path (self) :
+        return os.path.dirname( os.path.abspath( sys.argv[0] ))
+    def get_file_name_memory (self) :
+        return self.get_current_path() + os.sep + self.file_name_memory
     def save_memory(self) :
         if not self.save_memory_needed() : return None
-        f = open(self.file_name_memory, "w")
+        f = open(self.get_file_name_memory(), "w")
         for key in self.Memory :
             f.write(self.Memory[key] +' '+ key +' '+ 'sto')
         f.close()
         return None
     def load_memory (self) :
-        f = open(self.file_name_memory, 'r')
+        f = open(self.get_file_name_memory(), 'r')
         for line in f.readlines() :
             self.interpret(line)
         f.close()
@@ -220,7 +228,7 @@ class RPN_Calc :
         if command == 'depth' : 
             self.VarStack.append( float( len(self.VarStack) ) )
             return True
-        if command == 'clear' : 
+        if command in ['clear', 'clr'] : 
             self.VarStack.clear()
             return True
         return False
