@@ -52,13 +52,15 @@ class RPN_Calc :
     Memory = {}
     MemoryBackup = {}
     Errors = []
+    round_max = 11
+    round = round_max
     file_name_memory = "memory.rpn"
     def print_stack(self) :
         print()
         print("[", len(self.VarStack), "]")
         for var in self.VarStack:
             if is_number(var) and var.is_integer() : var = int(var)
-            print(" ", var)
+            print(" ", round(var, self.round))
         return None
     def backup(self) :
         self.VarStackBackup = self.VarStack.copy()
