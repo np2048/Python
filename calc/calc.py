@@ -56,6 +56,19 @@ class RPN_Calc :
     round_max = 11
     round = round_max
     file_name_memory = "memory.rpn"
+    def check_quotation_oddity(self, string):
+        if not (string.count('"') % 2 == 0 and string.count("'") % 2 == 0) :
+            self.erorr_quotation()
+            return False
+        return True
+    def extract_quoted(self, string) :
+        if string.count('"') + string.count("'") == 0 :
+            return string
+        if string[0] == '"' and string[-1] == '"' :
+            return string[1:-1]
+        if string[0] == "'" and string[-1] == "'" :
+            return string[1:-1]
+        return string
     def print_stack(self) :
         print()
         print("[", len(self.VarStack), "]")
@@ -75,10 +88,16 @@ class RPN_Calc :
         print(message)
         return None
     def error_index(self) :
-        self.Errors.append("Error: Array index out of bounds")
+        self.Errors.append("Error: Insufficient arguments in STACK")
         return None
     def error_not_string(self) :
         self.Errors.append("Error: value is not a String")
+        return None
+    def error_no_variable(self):
+        self.Errors.append("Variable undefined")
+        return None
+    def erorr_quotation(self):
+        self.Errors.append("Quotation error: quotes count not odd")
         return None
     def save_memory_needed (self) :
         self.MemoryBackup = self.Memory.copy()
@@ -239,6 +258,13 @@ class RPN_Calc :
         if command in ['clear', 'clr'] : 
             self.VarStack.clear()
             return True
+        if command in ['eval'] :
+            value = self.pop()
+            if len(self.Errors) : return False
+            if not is_string(value) : return True
+            value = self.extract_quoted(value)
+            self.interpret( value )
+            return True
         return False
     def interpret_single_memory (self, command) :
         if command in ['store', 'str', 'sto', '='] :
@@ -250,13 +276,24 @@ class RPN_Calc :
                 return False
             self.Memory[name] = str(value)
             return True
-        if command in ['read', 'recall', 'rcl'] :
+        if command in ['read', 'recall', 'rcl', '$'] :
             name = self.pop()
             if len(self.Errors) : return False
             if not is_string(name) : 
                 self.error_not_string()
                 return False
-            self.interpret( self.Memory[name] )
+            if name in self.Memory : 
+                self.interpret( self.Memory[name] )
+            else : self.error_no_variable()
+            return True
+        if command in ['purge'] :
+            name = self.pop()
+            if len(self.Errors) : return False
+            if not is_string(name) : 
+                self.error_not_string()
+                return False
+            if name in self.Memory : 
+                del self.Memory[name]
             return True
         return False
     def interpret_single_save (self, command) :
@@ -271,6 +308,9 @@ class RPN_Calc :
         if len(self.Errors) : return False
         if is_number(command) : 
             self.push(float(command))
+            return True
+        if command in SysLib : 
+            self.interpret(SysLib[command])
             return True
         if self.interpret_single_ariphmetic(command) :      return True
         if self.interpret_single_ariphmetic_div(command) :  return True
@@ -292,11 +332,10 @@ class RPN_Calc :
             return True
         return False
     def interpret(self, command_string) :
+        if not self.check_quotation_oddity(command_string):
+            return None
         for command in command_string.split():
-            if command in SysLib : 
-                self.interpret(SysLib[command])
-                continue
-            if calc.interpret_single(command) : continue
+            if not calc.interpret_single(command) : break
         return None 
 
 
