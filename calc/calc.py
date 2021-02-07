@@ -138,7 +138,7 @@ class RPN_Calc :
     def pop_number(self) :
         value = self.pop()
         if len(self.Errors) : return None
-        if not value : return None
+        if value is None : return None
         if self.is_string(value) :
             if value in self.Memory :
                 self.interpret( self.Memory[value] )
@@ -374,7 +374,7 @@ class RPN_Calc :
                 continue
             # if last part of string is ++ or -- add a space
             tail = command[len(command)-2:]
-            if len(command) > 2 and tail == '++' or tail == '--' :
+            if len(command) > 2 and (tail == '++' or tail == '--') :
                 self.interpret(command[:-2] +' '+ tail)
                 continue
             # execute command as a simple single command and push it to the command history stack if it is ok
