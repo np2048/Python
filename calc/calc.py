@@ -23,28 +23,12 @@ SysLib = {
     'neg'   : '0 swap -',
     'keep1' : 'rollad depth 1 - dropn',
     'keep2' : 'rollad rollad depth 2 - dropn',
+    ':'     : 'ip dec swap sto',
 }
 
 
 
 #== Functions ==================================================
-
-def is_number(s):
-    try:
-        float(s)
-        return True
-    except ValueError: pass
-    try:
-        unicodedata.numeric(s)
-        return True
-    except (TypeError, ValueError): pass
-    return False
-
-def is_string(s):
-    if not is_number(s) : return True
-    if s[0] == '"' and s[-1] == '"' : return True
-    if s[0] == "'" and s[-1] == "'" : return True
-    return False
 
 class RPN_Calc :
     Run = True
@@ -52,10 +36,27 @@ class RPN_Calc :
     VarStackBackup = []
     Memory = {}
     MemoryBackup = {}
+    CommandStack = []
+    ip = 0
     Errors = []
     round_max = 11
     round = round_max
     file_name_memory = "memory.rpn"
+    def is_number(self, s):
+        try:
+            float(s)
+            return True
+        except ValueError: return False
+        try:
+            unicodedata.numeric(s)
+            return True
+        except (TypeError, ValueError):  return False
+        return True
+    def is_string(self, s):
+        return not self.is_number(s)
+        if s[0] == '"' and s[-1] == '"' : return True
+        if s[0] == "'" and s[-1] == "'" : return True
+        return False
     def check_quotation_oddity(self, string):
         if not (string.count('"') % 2 == 0 and string.count("'") % 2 == 0) :
             self.erorr_quotation()
@@ -69,11 +70,11 @@ class RPN_Calc :
         if string[0] == "'" and string[-1] == "'" :
             return string[1:-1]
         return string
-    def print_stack(self) :
+    def print_status(self) :
         print()
-        print("[", len(self.VarStack), "]")
+        print("[", len(self.VarStack), "]", ':', self.ip)
         for var in self.VarStack:
-            if is_number(var) : 
+            if self.is_number(var) : 
                 if var.is_integer() : var = int(var)
                 print(" ", round(var, self.round))
             else : print(" ", var)
@@ -128,8 +129,13 @@ class RPN_Calc :
             return self.VarStack.pop()
         except IndexError : self.error_index()
     def push (self, value) :
-        if is_number(value) : value = round(value, self.round_max)
+        if self.is_number(value) : 
+            value = float(value)
+            value = round(value, self.round_max)
         self.VarStack.append(value)
+    def push_command(self, command) : 
+        if self.ip == len(self.CommandStack) : self.ip += 1
+        self.CommandStack.append(command)
     def interpret_single_ariphmetic_div (self, command) :
         if command == '/' :
             x = self.pop()
@@ -148,7 +154,7 @@ class RPN_Calc :
         if command == 'sum' : 
             nums = []
             for i in self.VarStack :
-                if is_number(i) : nums.append(i)
+                if self.is_number(i) : nums.append(i)
             self.push( sum(nums) )
             return True
         if command == '+' :
@@ -261,9 +267,12 @@ class RPN_Calc :
         if command in ['eval'] :
             value = self.pop()
             if len(self.Errors) : return False
-            if not is_string(value) : return True
+            if not self.is_string(value) : return True
             value = self.extract_quoted(value)
             self.interpret( value )
+            return True
+        if command in ['ip'] :
+            self.push(self.ip)
             return True
         return False
     def interpret_single_memory (self, command) :
@@ -271,7 +280,7 @@ class RPN_Calc :
             name = self.pop()
             value = self.pop()
             if len(self.Errors) : return False
-            if not is_string(name) : 
+            if not self.is_string(name) : 
                 self.error_not_string()
                 return False
             self.Memory[name] = str(value)
@@ -279,7 +288,7 @@ class RPN_Calc :
         if command in ['read', 'recall', 'rcl', '$'] :
             name = self.pop()
             if len(self.Errors) : return False
-            if not is_string(name) : 
+            if not self.is_string(name) : 
                 self.error_not_string()
                 return False
             if name in self.Memory : 
@@ -289,7 +298,7 @@ class RPN_Calc :
         if command in ['purge'] :
             name = self.pop()
             if len(self.Errors) : return False
-            if not is_string(name) : 
+            if not self.is_string(name) : 
                 self.error_not_string()
                 return False
             if name in self.Memory : 
@@ -306,7 +315,7 @@ class RPN_Calc :
         return False
     def interpret_single (self, command):
         if len(self.Errors) : return False
-        if is_number(command) : 
+        if self.is_number(command) : 
             self.push(float(command))
             return True
         if command in SysLib : 
@@ -327,7 +336,7 @@ class RPN_Calc :
             self.Run = False
             return True
         #self.Errors.append('Command unknown')
-        if is_string(command) : 
+        if self.is_string(command) : 
             self.push(command)
             return True
         return False
@@ -335,7 +344,15 @@ class RPN_Calc :
         if not self.check_quotation_oddity(command_string):
             return None
         for command in command_string.split():
-            if not calc.interpret_single(command) : break
+            if command[0] == '$' and len(command) > 1 : 
+                self.interpret(command[1:] +' '+ command[0])
+                continue
+            if command[-1] in [':', '$'] and len(command) > 1: 
+                self.interpret(command[0:-1] +' '+ command[-1])
+                continue
+            if calc.interpret_single(command) : 
+                self.push_command(command)
+            else : break
         return None 
 
 
@@ -345,7 +362,7 @@ calc = RPN_Calc()
 calc.load_memory()
 while calc.Run :
     if len(calc.Errors) : calc.undo()
-    calc.print_stack()
+    calc.print_status()
     for error in calc.Errors :
         print(error)
         calc.Errors.clear()
