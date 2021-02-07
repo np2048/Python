@@ -24,6 +24,13 @@ SysLib = {
     'keep1' : 'rollad depth 1 - dropn',
     'keep2' : 'rollad rollad depth 2 - dropn',
     ':'     : 'ip dec swap sto',
+    '+='    : 'dup rot + swap dup rot swap = $',
+    '++'    : '1 swap +=',
+    '-='    : 'dup rot + swap dup rot swap = $',
+    '--'    : '1 swap -=',
+    '*='    : 'dup rot + swap dup rot swap = $',
+    '/='    : 'dup rot + swap dup rot swap = $',
+    '%='    : 'dup rot + swap dup rot swap = $',
 }
 
 
@@ -128,6 +135,18 @@ class RPN_Calc :
         try:
             return self.VarStack.pop()
         except IndexError : self.error_index()
+    def pop_number(self) :
+        value = self.pop()
+        if len(self.Errors) : return None
+        if not value : return None
+        if self.is_string(value) :
+            if value in self.Memory :
+                self.interpret( self.Memory[value] )
+                return self.pop_number()
+            else : 
+                self.error_no_variable()
+                return None
+        return value
     def push (self, value) :
         if self.is_number(value) : 
             value = float(value)
@@ -158,26 +177,26 @@ class RPN_Calc :
             self.push( sum(nums) )
             return True
         if command == '+' :
-            x = self.pop()
-            y = self.pop()
+            x = self.pop_number()
+            y = self.pop_number()
             if len(self.Errors) : return False
             self.push( y + x )
             return True
         if command == '-' :
-            x = self.pop()
-            y = self.pop()
+            x = self.pop_number()
+            y = self.pop_number()
             if len(self.Errors) : return False
             self.push( y - x )
             return True
         if command == '*' :
-            x = self.pop()
-            y = self.pop()
+            x = self.pop_number()
+            y = self.pop_number()
             if len(self.Errors) : return False
             self.push( y * x )
             return True
         if command in ['**', '^'] :
-            x = self.pop()
-            y = self.pop()
+            x = self.pop_number()
+            y = self.pop_number()
             if len(self.Errors) : return False
             self.push( y ** x )
             return True
@@ -344,12 +363,21 @@ class RPN_Calc :
         if not self.check_quotation_oddity(command_string):
             return None
         for command in command_string.split():
+            # $variable => variable $
             if command[0] == '$' and len(command) > 1 : 
                 self.interpret(command[1:] +' '+ command[0])
                 continue
+            # string: => string :
+            # variable$ => variable $
             if command[-1] in [':', '$'] and len(command) > 1: 
                 self.interpret(command[0:-1] +' '+ command[-1])
                 continue
+            # if last part of string is ++ or -- add a space
+            tail = command[len(command)-2:]
+            if len(command) > 2 and tail == '++' or tail == '--' :
+                self.interpret(command[:-2] +' '+ tail)
+                continue
+            # execute command as a simple single command and push it to the command history stack if it is ok
             if calc.interpret_single(command) : 
                 self.push_command(command)
             else : break
