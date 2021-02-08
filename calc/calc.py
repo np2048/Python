@@ -72,13 +72,34 @@ class RPN_Calc :
             return False
         return True
     def extract_quoted(self, string) :
-        if string.count('"') + string.count("'") == 0 :
-            return string
         if string[0] == '"' and string[-1] == '"' :
             return string[1:-1]
         if string[0] == "'" and string[-1] == "'" :
             return string[1:-1]
         return string
+    def split_quoted_char(self, string, quote_char):
+        if string.count(quote_char) == 0 :
+            return []
+        result = []
+        first = 0
+        while True:
+            if string.count(quote_char, first) == 0 :
+                if string[first:] : result.append(string[first:])
+                break
+            first = string.index(quote_char, first)
+            if string.count(quote_char, first+1) == 0 :
+                if string[first+1:] : result.append(string[first+1:])
+                break
+            last = string.index(quote_char, first+1)
+            result.append(string[first:last+1])
+            first = last + 1
+        return result
+    def split_quoted(self, string):
+        result = self.split_quoted_char(string, '"')
+        if len(result) > 0 : return result
+        result = self.split_quoted_char(string, "'")
+        if len(result) > 0 : return result
+        return []
     def print_status(self) :
         print()
         print("[", len(self.VarStack), "]", ':', self.ip)
@@ -418,6 +439,14 @@ class RPN_Calc :
         return False
     def interpret(self, command_string) :
         if not self.check_quotation_oddity(command_string):
+            return None
+        quoted = self.split_quoted(command_string)
+        if len(quoted):
+            for command in quoted :
+                if command[0] in ['"', "'"] : 
+                    self.push(command)
+                else :
+                    self.interpret(command)
             return None
         for command in command_string.split():
             # $variable => variable $
