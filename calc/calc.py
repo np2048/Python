@@ -23,7 +23,7 @@ SysLib = {
     'neg'   : '0 swap -',
     'keep1' : 'rollad depth 1 - dropn',
     'keep2' : 'rollad rollad depth 2 - dropn',
-    ':'     : 'ip dec swap sto',
+    ':'     : 'ip 8 + swap sto', # Magic number inside. To find the right value run 'test:' in the calulator and compare value of the 'test' variable to the ip after command processing.
     '+='    : 'dup rot + swap dup rot swap = $',
     '++'    : '1 swap +=',
     '-='    : 'dup rot + swap dup rot swap = $',
@@ -32,6 +32,8 @@ SysLib = {
     '/='    : 'dup rot + swap dup rot swap = $',
     '%='    : 'dup rot + swap dup rot swap = $',
 }
+
+CommandReturn = [';', 'ret', 'end']
 
 
 
@@ -107,9 +109,12 @@ class RPN_Calc :
     def erorr_quotation(self):
         self.Errors.append("Quotation error: quotes count not odd")
         return None
+    def error_out_of_program(self):
+        self.Errors.append("Error: jump out of program")
+        return None
     def save_memory_needed (self) :
         self.MemoryBackup = self.Memory.copy()
-        self.load_memory()
+        if not self.load_memory() : return True
         needed = self.Memory != self.MemoryBackup
         if needed : self.Memory = self.MemoryBackup
         return needed
@@ -121,14 +126,17 @@ class RPN_Calc :
         if not self.save_memory_needed() : return None
         f = open(self.get_file_name_memory(), "w")
         for key in self.Memory :
-            f.write(self.Memory[key] +' '+ key +' '+ 'sto')
+            f.write(self.Memory[key] +' '+ key +' '+ '=\n')
         f.close()
         return None
     def load_memory (self) :
-        f = open(self.get_file_name_memory(), 'r')
-        for line in f.readlines() :
-            self.interpret(line)
-        f.close()
+        try :
+            f = open(self.get_file_name_memory(), 'r')
+            for line in f.readlines() :
+                self.interpret(line)
+            f.close()
+        except IOError : 
+            return False
         return True
     def pop(self) :
         if len(self.Errors) : return None
@@ -153,8 +161,37 @@ class RPN_Calc :
             value = round(value, self.round_max)
         self.VarStack.append(value)
     def push_command(self, command) : 
-        if self.ip == len(self.CommandStack) : self.ip += 1
-        self.CommandStack.append(command)
+        if self.ip == len(self.CommandStack) : 
+            self.CommandStack.append(command)
+        else : self.CommandStack[self.ip] = command
+        self.ip += 1
+    def run_single(self):
+        if self.CommandStack[self.ip] is None : return False
+        result = self.interpret_single(self.CommandStack[self.ip])
+        self.ip += 1
+        return result
+    def run_here(self, start, end) : 
+        if start >= len(self.CommandStack) :
+            self.error_out_of_program()
+            return False
+        self.ip = int(start)
+        while self.ip < end : 
+            if self.CommandStack[self.ip] is None : continue
+            if not self.run_single() : return False
+        return True
+    def run(self, start) : 
+        if start >= len(self.CommandStack) :
+            self.error_out_of_program()
+            return False
+        self.ip = int(start)
+        while True :
+            if self.CommandStack[self.ip] is None : break
+            command = self.CommandStack[self.ip]
+            if command in CommandReturn :
+                self.ip += 1
+                break
+            if not self.run_single() : return False
+        return True   
     def interpret_single_ariphmetic_div (self, command) :
         if command == '/' :
             x = self.pop()
@@ -276,6 +313,25 @@ class RPN_Calc :
             if len(self.Errors) : return False
             return True
         return False
+    def interpret_single_branch (self, command) :
+        if command == 'goto' :
+            ip = self.ip
+            end = ip - 1
+            start = self.pop_number()
+            if len(self.Errors) : return False
+            result = self.run_here(start, end)
+            self.ip = ip
+            return result
+        if command in ['run', 'call'] :
+            ip = self.ip
+            start = self.pop_number()
+            if len(self.Errors) : return False
+            result = self.run(start)
+            self.ip = ip
+            return result
+        if command in CommandReturn :
+            return True
+        return False
     def interpret_single_helper (self, command) :
         if command == 'depth' : 
             self.push( float( len(self.VarStack) ) )
@@ -347,6 +403,7 @@ class RPN_Calc :
         if self.interpret_single_pick(command) :            return True
         if self.interpret_single_dup(command) :             return True
         if self.interpret_single_drop(command) :            return True
+        if self.interpret_single_branch(command) :          return True
         if self.interpret_single_helper(command) :          return True
         if self.interpret_single_memory(command) :          return True
         if self.interpret_single_save(command) :            return True
