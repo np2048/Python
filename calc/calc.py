@@ -456,12 +456,14 @@ class RPN_Calc :
             return None
         for command in command_string.split():
             # $variable => variable $
-            if command[0] == '$' and len(command) > 1 : 
+            # =variable => variable =
+            if command[0] in ['$', '='] and len(command) > 1 : 
                 self.interpret(command[1:] +' '+ command[0])
                 continue
             # string: => string :
             # variable$ => variable $
-            if command[-1] in [':', '$'] and len(command) > 1: 
+            # variable= => variable =
+            if command[-1] in [':', '$', '='] and len(command) > 1: 
                 self.interpret(command[0:-1] +' '+ command[-1])
                 continue
             # if last part of string is ++ or -- add a space
