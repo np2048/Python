@@ -363,7 +363,9 @@ class RPN_Calc :
         if command in ['eval'] :
             value = self.pop()
             if len(self.Errors) : return False
-            if not self.is_string(value) : return True
+            if not self.is_string(value) : 
+                self.interpret_single(value)
+                return True
             value = self.extract_quoted(value)
             self.interpret( value )
             return True
