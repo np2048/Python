@@ -170,7 +170,11 @@ class RPN_Calc :
         if value is None : return None
         if self.is_string(value) :
             if value in self.Memory :
-                self.interpret( self.Memory[value] )
+                if self.is_number(self.Memory[value]):
+                    self.interpret_single( self.Memory[value] )
+                else :
+                    self.push(self.Memory[value])
+                    self.interpret_single('eval')
                 return self.pop_number()
             else : 
                 self.error_no_variable()
