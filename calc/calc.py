@@ -367,9 +367,10 @@ class RPN_Calc :
         if command in ['eval'] :
             value = self.pop()
             if len(self.Errors) : return False
-            if not self.is_string(value) : 
+            if self.is_number(value) : 
                 self.interpret_single(value)
                 return True
+            if value in self.Memory : value = self.Memory[value]
             value = self.extract_quoted(value)
             self.interpret( value )
             return True
@@ -463,7 +464,7 @@ class RPN_Calc :
             # string: => string :
             # variable$ => variable $
             # variable= => variable =
-            if command[-1] in [':', '$', '='] and len(command) > 1: 
+            if command[-1] in [':', '$', '=', ';'] and len(command) > 1: 
                 self.interpret(command[0:-1] +' '+ command[-1])
                 continue
             # if last part of string is ++ or -- add a space

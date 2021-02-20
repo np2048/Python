@@ -1,0 +1,25 @@
+
+bool "action if true" if 
+bool "actions if true" "actions if False" ifelse
+
+
+nested:
+bool
+"nested if code" if
+;
+bool "if_1 call" if 
+
+
+
+3 "actions call" repeat
+
+condition "actions" while
+condition "actions" do
+
+i 1 10 "loop statement" for 
+
+test: dup 7 ; test call 3 repeat 
+
+
+1 if dup i + else 1 +;
+
